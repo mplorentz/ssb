@@ -90,6 +90,8 @@ func (r *graphReplicator) makeUpdater(log log.Logger, self refs.FeedRef, hopCoun
 			r.current.feedWants.AddRef(ref)
 		}
 
+		r.current.feedWants.AddRef(self)
+
 		level.Debug(log).Log("feed-want-count", r.current.feedWants.Count(), "hops", hopCount, "took", time.Since(start))
 
 		// make sure we dont fetch and allow blocked feeds
@@ -130,6 +132,9 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 		return nil
 	})
 	done := obs.Register(handle)
+
+	// trigger at least once
+	work()
 
 	for {
 		select {
