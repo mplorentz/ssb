@@ -64,6 +64,7 @@ func (s *Sbot) newGraphReplicator() (*graphReplicator, error) {
 	var r graphReplicator
 	r.bot = s
 	r.current = newLister()
+	r.current.feedWants.AddRef(s.KeyPair.ID())
 
 	replicateEvt := log.With(s.info, "event", "update-replicate")
 	update := r.makeUpdater(replicateEvt, s.KeyPair.ID(), int(s.hopCount))
@@ -89,8 +90,6 @@ func (r *graphReplicator) makeUpdater(log log.Logger, self refs.FeedRef, hopCoun
 		for _, ref := range refs {
 			r.current.feedWants.AddRef(ref)
 		}
-
-		r.current.feedWants.AddRef(self)
 
 		level.Debug(log).Log("feed-want-count", r.current.feedWants.Count(), "hops", hopCount, "took", time.Since(start))
 
@@ -132,9 +131,6 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 		return nil
 	})
 	done := obs.Register(handle)
-
-	// trigger at least once
-	work()
 
 	for {
 		select {
