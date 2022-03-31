@@ -21,14 +21,16 @@ import (
 // It uses the information in the token to build a guest-client connection
 // and place an 'invite.use' rpc call with it's longTerm key.
 // If the peer responds with a message it returns nil
-func Redeem(ctx context.Context, tok Token, longTerm refs.FeedRef) error {
+func Redeem(ctx context.Context, tok Token, longTerm refs.FeedRef, opts ...client.Option) error {
 	inviteKeyPair, err := ssb.NewKeyPair(bytes.NewReader(tok.Seed[:]), refs.RefAlgoFeedSSB1)
 	if err != nil {
 		return fmt.Errorf("invite: couldn't make keypair from seed: %w", err)
 	}
 
+	opts = append(opts, client.WithContext(ctx))
+
 	// now use the invite
-	inviteClient, err := client.NewTCP(inviteKeyPair, tok.Address, client.WithContext(ctx))
+	inviteClient, err := client.NewTCP(inviteKeyPair, tok.Address, opts...)
 	if err != nil {
 		return fmt.Errorf("invite: failed to establish guest-client connection: %w", err)
 	}
