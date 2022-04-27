@@ -14,5 +14,9 @@ import (
 func badgerOpts(dbPath string) badger.Options {
 	return badger.DefaultOptions(dbPath).
 		WithValueLogFileSize(1 << 21).
+		WithNumMemtables(1).
+		WithNumLevelZeroTables(1).
+		WithNumLevelZeroTablesStall(5).
+		WithNumCompactors(2).
 		WithLogger(nil)
 }
