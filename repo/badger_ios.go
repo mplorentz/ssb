@@ -18,5 +18,6 @@ func badgerOpts(dbPath string) badger.Options {
 		WithNumLevelZeroTables(1).
 		WithNumLevelZeroTablesStall(5).
 		WithNumCompactors(2).
+		WithIndexCacheSize(1 << 21).
 		WithLogger(nil)
 }
