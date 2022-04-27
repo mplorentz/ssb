@@ -13,11 +13,13 @@ import (
 
 func badgerOpts(dbPath string) badger.Options {
 	return badger.DefaultOptions(dbPath).
+		WithMemTableSize(1 << 20).
 		WithValueLogFileSize(1 << 21).
 		WithNumMemtables(1).
 		WithNumLevelZeroTables(1).
-		WithNumLevelZeroTablesStall(5).
-		WithNumCompactors(2).
+		WithNumLevelZeroTablesStall(1).
+		WithNumCompactors(1).
 		WithIndexCacheSize(1 << 21).
+		WithBlockCacheSize(1 << 21).
 		WithLogger(nil)
 }
